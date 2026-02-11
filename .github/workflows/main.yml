@@ -19,22 +19,24 @@ jobs:
       with:
         node-version: 18
 
+    # Backend
     - name: Install Backend
-      working-directory: backend
+      working-directory: personal-finance-tracker09-02-2026/backend
       run: npm install
 
     - name: Test Backend
-      working-directory: backend
+      working-directory: personal-finance-tracker09-02-2026/backend
       run: npm test --if-present
 
+    # Frontend
     - name: Install Frontend
-      working-directory: frontend
+      working-directory: personal-finance-tracker09-02-2026/frontend
       run: npm install
 
     - name: Test Frontend
-      working-directory: frontend
+      working-directory: personal-finance-tracker09-02-2026/frontend
       run: npm test
 
     - name: Build Frontend
-      working-directory: frontend
+      working-directory: personal-finance-tracker09-02-2026/frontend
       run: npm run build
