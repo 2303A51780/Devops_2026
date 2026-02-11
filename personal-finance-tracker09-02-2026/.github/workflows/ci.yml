@@ -1,0 +1,42 @@
+name: Fullstack CI Pipeline
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v3
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: 18
+
+    # Backend
+    - name: Install Backend
+      working-directory: personal-finance-tracker09-02-2026/backend
+      run: npm install
+
+    - name: Test Backend
+      working-directory: personal-finance-tracker09-02-2026/backend
+      run: npm test --if-present
+
+    # Frontend
+    - name: Install Frontend
+      working-directory: personal-finance-tracker09-02-2026/frontend
+      run: npm install
+
+    - name: Test Frontend
+      working-directory: personal-finance-tracker09-02-2026/frontend
+      run: npm test
+
+    - name: Build Frontend
+      working-directory: personal-finance-tracker09-02-2026/frontend
+      run: npm run build
