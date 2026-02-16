@@ -1,11 +1,11 @@
 const express = require("express");
 const app = express();
-const port = 5000;
+const port = process.env.PORT || 5000;
 
 // Middleware
 app.use(express.json());
 
-// Manual CORS setup
+// Manual CORS
 app.use((req, res, next) => {
   res.header("Access-Control-Allow-Origin", "*");
   res.header(
@@ -16,7 +16,7 @@ app.use((req, res, next) => {
 });
 
 // -----------------------------
-// In-memory Data Storage
+// In-memory storage
 // -----------------------------
 let expenses = [];
 let incomes = [];
@@ -28,10 +28,10 @@ app.get("/api/dashboard", (req, res) => {
   const totalIncome = incomes.reduce((sum, item) => sum + item.amount, 0);
   const totalExpenses = expenses.reduce((sum, item) => sum + item.amount, 0);
 
-  res.json({
+  res.status(200).json({
     totalIncome,
     totalExpenses,
-    balance: totalIncome - totalExpenses,
+    balance: totalIncome - totalExpenses
   });
 });
 
@@ -50,7 +50,7 @@ app.post("/api/expenses", (req, res) => {
   const newExpense = {
     id: Date.now(),
     title,
-    amount: Number(amount),
+    amount: Number(amount)
   };
 
   expenses.push(newExpense);
@@ -59,7 +59,7 @@ app.post("/api/expenses", (req, res) => {
 
 // Get all expenses
 app.get("/api/expenses", (req, res) => {
-  res.json(expenses);
+  res.status(200).json(expenses);
 });
 
 // -----------------------------
@@ -77,7 +77,7 @@ app.post("/api/income", (req, res) => {
   const newIncome = {
     id: Date.now(),
     source,
-    amount: Number(amount),
+    amount: Number(amount)
   };
 
   incomes.push(newIncome);
@@ -86,17 +86,17 @@ app.post("/api/income", (req, res) => {
 
 // Get all income
 app.get("/api/income", (req, res) => {
-  res.json(incomes);
+  res.status(200).json(incomes);
 });
 
 // -----------------------------
-// Export app for testing
+// Export for testing
 // -----------------------------
 module.exports = app;
 
-// Start server only if NOT in test mode
+// Start server only if NOT testing
 if (process.env.NODE_ENV !== "test") {
   app.listen(port, () => {
-    console.log(`Backend server running on http://localhost:${port}`);
+    console.log(`Server running on http://localhost:${port}`);
   });
 }

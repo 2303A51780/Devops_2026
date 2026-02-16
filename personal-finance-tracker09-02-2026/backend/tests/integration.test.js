@@ -1,5 +1,5 @@
 const request = require("supertest");
-const app = require("../server"); // export app from server.js
+const app = require("../server");
 
 describe("Integration Tests - Personal Finance APIs", () => {
 
@@ -8,6 +8,7 @@ describe("Integration Tests - Personal Finance APIs", () => {
     expect(res.statusCode).toBe(200);
     expect(res.body).toHaveProperty("totalIncome");
     expect(res.body).toHaveProperty("totalExpenses");
+    expect(res.body).toHaveProperty("balance");
   });
 
   test("Expenses API create and fetch", async () => {

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites name="jest tests" tests="3" failures="0" errors="0" time="1.755">
+  <testsuite name="Integration Tests - Personal Finance APIs" errors="0" failures="0" skipped="0" timestamp="2026-02-16T04:28:54" time="1.587" tests="3">
+    <testcase classname="Integration Tests - Personal Finance APIs Dashboard API should return summary" name="Integration Tests - Personal Finance APIs Dashboard API should return summary" time="0.101">
+    </testcase>
+    <testcase classname="Integration Tests - Personal Finance APIs Expenses API create and fetch" name="Integration Tests - Personal Finance APIs Expenses API create and fetch" time="0.087">
+    </testcase>
+    <testcase classname="Integration Tests - Personal Finance APIs Income API create and fetch" name="Integration Tests - Personal Finance APIs Income API create and fetch" time="0.013">
+    </testcase>
+  </testsuite>
+</testsuites>
