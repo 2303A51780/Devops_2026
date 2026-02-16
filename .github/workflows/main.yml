@@ -11,32 +11,44 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout Code
-      uses: actions/checkout@v3
+      # Checkout repository
+      - name: Checkout Code
+        uses: actions/checkout@v3
 
-    - name: Setup Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: 18
+      # Setup Node
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
 
-    # Backend
-    - name: Install Backend
-      working-directory: personal-finance-tracker09-02-2026/backend
-      run: npm install
+      # =========================
+      # Backend
+      # =========================
+      - name: Install Backend Dependencies
+        working-directory: backend
+        run: npm install
 
-    - name: Test Backend
-      working-directory: personal-finance-tracker09-02-2026/backend
-      run: npm test --if-present
+      - name: Run Backend Integration Tests
+        working-directory: backend
+        run: npm test
+        env:
+          NODE_ENV: test
 
-    # Frontend
-    - name: Install Frontend
-      working-directory: personal-finance-tracker09-02-2026/frontend
-      run: npm install
+      # Upload test report (Bonus)
+      - name: Upload Backend Test Report
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: backend-test-report
+          path: backend/junit.xml
 
-    - name: Test Frontend
-      working-directory: personal-finance-tracker09-02-2026/frontend
-      run: npm test
+      # =========================
+      # Frontend
+      # =========================
+      - name: Install Frontend Dependencies
+        working-directory: frontend
+        run: npm install
 
-    - name: Build Frontend
-      working-directory: personal-finance-tracker09-02-2026/frontend
-      run: npm run build
+      - name: Build Frontend
+        working-directory: frontend
+        run: npm run build
