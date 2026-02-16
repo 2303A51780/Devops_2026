@@ -21,6 +21,12 @@ app.use((req, res, next) => {
 let expenses = [];
 let incomes = [];
 
+// Function to reset data (important for tests)
+const resetData = () => {
+  expenses = [];
+  incomes = [];
+};
+
 // -----------------------------
 // Dashboard API
 // -----------------------------
@@ -43,7 +49,7 @@ app.get("/api/dashboard", (req, res) => {
 app.post("/api/expenses", (req, res) => {
   const { title, amount } = req.body;
 
-  if (!title || !amount) {
+  if (!title || amount === undefined) {
     return res.status(400).json({ message: "Title and amount required" });
   }
 
@@ -70,7 +76,7 @@ app.get("/api/expenses", (req, res) => {
 app.post("/api/income", (req, res) => {
   const { source, amount } = req.body;
 
-  if (!source || !amount) {
+  if (!source || amount === undefined) {
     return res.status(400).json({ message: "Source and amount required" });
   }
 
@@ -92,7 +98,7 @@ app.get("/api/income", (req, res) => {
 // -----------------------------
 // Export for testing
 // -----------------------------
-module.exports = app;
+module.exports = { app, resetData };
 
 // Start server only if NOT testing
 if (process.env.NODE_ENV !== "test") {
