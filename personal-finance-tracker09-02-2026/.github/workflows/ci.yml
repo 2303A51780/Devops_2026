@@ -1,4 +1,4 @@
-name: Fullstack CI Pipeline
+name: Fullstack Integration CI Pipeline
 
 on:
   push:
@@ -7,36 +7,84 @@ on:
     branches: [ main ]
 
 jobs:
-  build-test:
+  integration-tests:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout Code
-      uses: actions/checkout@v3
+      # 1. Checkout code
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-    - name: Setup Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: 18
+      # 2. Setup Node
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 18
+          cache: npm
+          cache-dependency-path: |
+            backend/package-lock.json
+            frontend/package-lock.json
 
-    # Backend
-    - name: Install Backend
-      working-directory: personal-finance-tracker09-02-2026/backend
-      run: npm install
+      # -------------------------
+      # Backend Setup
+      # -------------------------
+      - name: Install Backend Dependencies
+        working-directory: backend
+        run: npm install
 
-    - name: Test Backend
-      working-directory: personal-finance-tracker09-02-2026/backend
-      run: npm test --if-present
+      # Start backend in background
+      - name: Start Backend Server
+        working-directory: backend
+        run: |
+          nohup npm start > server.log 2>&1 &
+          echo $! > server.pid
 
-    # Frontend
-    - name: Install Frontend
-      working-directory: personal-finance-tracker09-02-2026/frontend
-      run: npm install
+      # Wait until server is ready
+      - name: Wait for Backend to be Ready
+        run: |
+          echo "Waiting for backend..."
+          for i in {1..30}; do
+            curl -s http://localhost:5000/api/dashboard && echo "Backend is up!" && exit 0
+            sleep 2
+          done
+          echo "Backend failed to start"
+          exit 1
 
-    - name: Test Frontend
-      working-directory: personal-finance-tracker09-02-2026/frontend
-      run: npm test
+      # -------------------------
+      # Integration Tests (Jest + Supertest)
+      # -------------------------
+      - name: Run Backend Integration Tests
+        working-directory: backend
+        run: |
+          npm test -- --coverage --reporters=default --reporters=jest-junit
 
-    - name: Build Frontend
-      working-directory: personal-finance-tracker09-02-2026/frontend
-      run: npm run build
+      # Upload test reports (Bonus)
+      - name: Upload Test Reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: integration-test-reports
+          path: backend/junit.xml
+
+      # Stop backend always
+      - name: Stop Backend Server
+        if: always()
+        run: |
+          if [ -f backend/server.pid ]; then
+            kill $(cat backend/server.pid) || true
+          fi
+
+      # -------------------------
+      # Frontend (Build + Test)
+      # -------------------------
+      - name: Install Frontend Dependencies
+        working-directory: frontend
+        run: npm install
+
+      - name: Run Frontend Tests
+        working-directory: frontend
+        run: npm test --if-present
+
+      - name: Build Frontend
+        working-directory: frontend
+        run: npm run build

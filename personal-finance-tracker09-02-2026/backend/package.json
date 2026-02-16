@@ -4,15 +4,17 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-  "start": "node server.js",
-  "test": "echo \"Backend tests passed\""
-},
-
+    "start": "node server.js",
+    "test": "jest --coverage --reporters=default --reporters=jest-junit"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
     "express": "^5.2.1"
+  },
+  "devDependencies": {
+    "jest-junit": "^16.0.0"
   }
 }

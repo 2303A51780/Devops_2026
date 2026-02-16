@@ -1,25 +1,102 @@
-const express = require('express');
+const express = require("express");
 const app = express();
 const port = 5000;
 
-// Manual CORS setup (without cors package)
+// Middleware
+app.use(express.json());
+
+// Manual CORS setup
 app.use((req, res, next) => {
   res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept"
+  );
   next();
 });
 
-// Sample data
-const dashboardData = {
-  totalIncome: 5000,
-  totalExpenses: 3000,
-};
+// -----------------------------
+// In-memory Data Storage
+// -----------------------------
+let expenses = [];
+let incomes = [];
 
-// API
-app.get('/api/dashboard', (req, res) => {
-  res.json(dashboardData);
+// -----------------------------
+// Dashboard API
+// -----------------------------
+app.get("/api/dashboard", (req, res) => {
+  const totalIncome = incomes.reduce((sum, item) => sum + item.amount, 0);
+  const totalExpenses = expenses.reduce((sum, item) => sum + item.amount, 0);
+
+  res.json({
+    totalIncome,
+    totalExpenses,
+    balance: totalIncome - totalExpenses,
+  });
 });
 
-app.listen(port, () => {
-  console.log(`Backend server running on http://localhost:${port}`);
+// -----------------------------
+// Expenses APIs
+// -----------------------------
+
+// Create expense
+app.post("/api/expenses", (req, res) => {
+  const { title, amount } = req.body;
+
+  if (!title || !amount) {
+    return res.status(400).json({ message: "Title and amount required" });
+  }
+
+  const newExpense = {
+    id: Date.now(),
+    title,
+    amount: Number(amount),
+  };
+
+  expenses.push(newExpense);
+  res.status(201).json(newExpense);
 });
+
+// Get all expenses
+app.get("/api/expenses", (req, res) => {
+  res.json(expenses);
+});
+
+// -----------------------------
+// Income APIs
+// -----------------------------
+
+// Create income
+app.post("/api/income", (req, res) => {
+  const { source, amount } = req.body;
+
+  if (!source || !amount) {
+    return res.status(400).json({ message: "Source and amount required" });
+  }
+
+  const newIncome = {
+    id: Date.now(),
+    source,
+    amount: Number(amount),
+  };
+
+  incomes.push(newIncome);
+  res.status(201).json(newIncome);
+});
+
+// Get all income
+app.get("/api/income", (req, res) => {
+  res.json(incomes);
+});
+
+// -----------------------------
+// Export app for testing
+// -----------------------------
+module.exports = app;
+
+// Start server only if NOT in test mode
+if (process.env.NODE_ENV !== "test") {
+  app.listen(port, () => {
+    console.log(`Backend server running on http://localhost:${port}`);
+  });
+}
