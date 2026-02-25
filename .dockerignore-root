@@ -1,0 +1,46 @@
+# Docker volumes and persistent data
+./2026_01_19/db/
+./personal-finance-tracker09-02-2026/db/
+
+# Docker Compose local environment
+.env
+.env.local
+.env.*.local
+
+# Node modules (in case)
+node_modules/
+npm-debug.log*
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage reports
+coverage/
+
+# Build outputs
+dist/
+build/
+
+# Temporary files
+tmp/
+temp/

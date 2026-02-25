@@ -1,8 +1,9 @@
 const { Sequelize } = require("sequelize");
+const path = require("path");
 
 const sequelize = new Sequelize({
   dialect: "sqlite",
-  storage: "./database.sqlite",
+  storage: path.join(__dirname, "../../db/database.sqlite"),
   logging: false, // set true if you want SQL logs
 });
 
